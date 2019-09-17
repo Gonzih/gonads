@@ -20,20 +20,20 @@ func Some(v T) Option {
 	return &some{val: v}
 }
 
-func (s *some) Some() bool {
+func (o *some) Some() bool {
 	return true
 }
 
-func (s *some) None() bool {
+func (o *some) None() bool {
 	return false
 }
 
-func (s *some) Unwrap() T {
-	return s.val
+func (o *some) Unwrap() T {
+	return o.val
 }
 
-func (s *some) UnwrapOr(_ T) T {
-	return s.val
+func (o *some) UnwrapOr(_ T) T {
+	return o.val
 }
 
 type none struct {
@@ -43,20 +43,20 @@ func None() Option {
 	return &none{}
 }
 
-func (n *none) Some() bool {
+func (o *none) Some() bool {
 	return false
 }
 
-func (n *none) None() bool {
+func (o *none) None() bool {
 	return true
 }
 
-func (n *none) Unwrap() T {
+func (o *none) Unwrap() T {
 	log.Panic("Unwrap call on None!")
 	return nil
 }
 
-func (n *none) UnwrapOr(alt T) T {
+func (o *none) UnwrapOr(alt T) T {
 	return alt
 }
 
