@@ -10,6 +10,8 @@ type Option interface {
 	IsNone() bool
 	Unwrap() T
 	UnwrapOr(T) T
+	Map(func(F) T) Option
+	FMap(func(F) Option) Option
 }
 
 type some struct {
@@ -36,6 +38,14 @@ func (o *some) UnwrapOr(_ T) T {
 	return o.val
 }
 
+func (o *some) Map(f func(F) T) Option {
+	return Some(f(o.Unwrap()))
+}
+
+func (o *some) FMap(f func(F) Option) Option {
+	return f(o.Unwrap())
+}
+
 type none struct {
 }
 
@@ -60,18 +70,10 @@ func (o *none) UnwrapOr(alt T) T {
 	return alt
 }
 
-func FMap(f func(F) Option, o Option) Option {
-	if o.IsSome() {
-		return f(o.Unwrap())
-	}
-
+func (o *none) Map(f func(F) T) Option {
 	return o
 }
 
-func Map(f func(F) T, o Option) Option {
-	if o.IsSome() {
-		return Some(f(o.Unwrap()))
-	}
-
+func (o *none) FMap(f func(F) Option) Option {
 	return o
 }

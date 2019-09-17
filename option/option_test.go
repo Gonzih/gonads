@@ -23,18 +23,18 @@ func TestNone(t *testing.T) {
 
 func TestMapNone(t *testing.T) {
 	o := None()
-	o2 := Map(func(s F) T {
+	o2 := o.Map(func(s F) T {
 		return fmt.Sprintf("hello %v", s)
-	}, o)
+	})
 
 	assert.True(t, o2.IsNone())
 }
 
 func TestMapSome(t *testing.T) {
 	o := Some("world")
-	o2 := Map(func(s F) T {
+	o2 := o.Map(func(s F) T {
 		return fmt.Sprintf("hello %v", s)
-	}, o)
+	})
 
 	assert.True(t, o2.IsSome())
 	assert.Equal(t, o2.Unwrap(), "hello world")
@@ -50,7 +50,7 @@ func getName(name F) Option {
 
 func TestFMapSome(t *testing.T) {
 	o := Some("potato")
-	o2 := FMap(getName, o)
+	o2 := o.FMap(getName)
 
 	assert.True(t, o2.IsSome())
 	assert.Equal(t, o2.Unwrap(), "Potato")
@@ -58,14 +58,14 @@ func TestFMapSome(t *testing.T) {
 
 func TestFMapSomeWithMissingVal(t *testing.T) {
 	o := Some("not potato")
-	o2 := FMap(getName, o)
+	o2 := o.FMap(getName)
 
 	assert.True(t, o2.IsNone())
 }
 
 func TestFMapNone(t *testing.T) {
 	o := None()
-	o2 := FMap(getName, o)
+	o2 := o.FMap(getName)
 
 	assert.True(t, o2.IsNone())
 }

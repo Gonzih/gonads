@@ -10,6 +10,8 @@ type Result interface {
 	IsErr() bool
 	Ok() T
 	Err() error
+	Map(func(F) T) Result
+	FMap(func(F) Result) Result
 }
 
 type ok struct {
@@ -37,6 +39,14 @@ func (r *ok) Err() error {
 	return nil
 }
 
+func (r *ok) Map(f func(F) T) Result {
+	return Ok(f(r.Ok()))
+}
+
+func (r *ok) FMap(f func(F) Result) Result {
+	return f(r.Ok())
+}
+
 type err struct {
 	err error
 }
@@ -62,19 +72,11 @@ func (r *err) Err() error {
 	return r.err
 }
 
-func FMap(f func(F) Result, r Result) Result {
-	if r.IsOk() {
-		return f(r.Ok())
-	}
-
+func (r *err) Map(f func(F) T) Result {
 	return r
 }
 
-func Map(f func(F) T, r Result) Result {
-	if r.IsOk() {
-		return Ok(f(r.Ok()))
-	}
-
+func (r *err) FMap(f func(F) Result) Result {
 	return r
 }
 

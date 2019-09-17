@@ -28,9 +28,9 @@ func TestErr(t *testing.T) {
 func TestMapOk(t *testing.T) {
 	r := Ok("test")
 
-	r2 := Map(func(s F) T {
+	r2 := r.Map(func(s F) T {
 		return fmt.Sprintf("hello %v", s)
-	}, r)
+	})
 
 	assert.True(t, r2.IsOk())
 	assert.Equal(t, "hello test", r2.Ok())
@@ -40,9 +40,9 @@ func TestMapErr(t *testing.T) {
 	e := errors.New("error message")
 	r := Err(e)
 
-	r2 := Map(func(s F) T {
+	r2 := r.Map(func(s F) T {
 		return fmt.Sprintf("hello %v", s)
-	}, r)
+	})
 
 	assert.False(t, r2.IsOk())
 	assert.Equal(t, e, r2.Err())
@@ -59,7 +59,7 @@ func lookupName(name F) Result {
 func TestFMapOk(t *testing.T) {
 	r := Ok("potato")
 
-	r2 := FMap(lookupName, r)
+	r2 := r.FMap(lookupName)
 
 	assert.True(t, r2.IsOk())
 	assert.Equal(t, "Potato", r2.Ok())
@@ -68,7 +68,7 @@ func TestFMapOk(t *testing.T) {
 func TestFMapOkWrongName(t *testing.T) {
 	r := Ok("noone")
 
-	r2 := FMap(lookupName, r)
+	r2 := r.FMap(lookupName)
 
 	assert.False(t, r2.IsOk())
 }
@@ -77,7 +77,7 @@ func TestFMapErr(t *testing.T) {
 	e := errors.New("error message")
 	r := Err(e)
 
-	r2 := FMap(lookupName, r)
+	r2 := r.FMap(lookupName)
 
 	assert.False(t, r2.IsOk())
 	assert.Equal(t, e, r2.Err())
