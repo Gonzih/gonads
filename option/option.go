@@ -14,66 +14,66 @@ type Option interface {
 	FMap(func(F) Option) Option
 }
 
-type some struct {
+type SomeImpl struct {
 	val T
 }
 
 func Some(v T) Option {
-	return &some{val: v}
+	return &SomeImpl{val: v}
 }
 
-func (o *some) IsSome() bool {
+func (o *SomeImpl) IsSome() bool {
 	return true
 }
 
-func (o *some) IsNone() bool {
+func (o *SomeImpl) IsNone() bool {
 	return !o.IsSome()
 }
 
-func (o *some) Unwrap() T {
+func (o *SomeImpl) Unwrap() T {
 	return o.val
 }
 
-func (o *some) UnwrapOr(_ T) T {
+func (o *SomeImpl) UnwrapOr(_ T) T {
 	return o.val
 }
 
-func (o *some) Map(f func(F) T) Option {
+func (o *SomeImpl) Map(f func(F) T) Option {
 	return Some(f(o.Unwrap()))
 }
 
-func (o *some) FMap(f func(F) Option) Option {
+func (o *SomeImpl) FMap(f func(F) Option) Option {
 	return f(o.Unwrap())
 }
 
-type none struct {
+type NoneImpl struct {
 }
 
 func None() Option {
-	return &none{}
+	return &NoneImpl{}
 }
 
-func (o *none) IsSome() bool {
+func (o *NoneImpl) IsSome() bool {
 	return false
 }
 
-func (o *none) IsNone() bool {
+func (o *NoneImpl) IsNone() bool {
 	return !o.IsSome()
 }
 
-func (o *none) Unwrap() T {
+func (o *NoneImpl) Unwrap() T {
 	log.Panic("Unwrap call on None!")
 	return nil
 }
 
-func (o *none) UnwrapOr(alt T) T {
+func (o *NoneImpl) UnwrapOr(alt T) T {
 	return alt
 }
 
-func (o *none) Map(f func(F) T) Option {
+func (o *NoneImpl) Map(f func(F) T) Option {
 	return o
 }
 
-func (o *none) FMap(f func(F) Option) Option {
+func (o *NoneImpl) FMap(f func(F) Option) Option {
 	return o
 }
