@@ -2,8 +2,8 @@ package result
 
 import "log"
 
-type F interface{}
-type T interface{}
+type F = interface{}
+type T = interface{}
 
 type Result interface {
 	IsOk() bool
@@ -52,7 +52,7 @@ type ErrImpl struct {
 }
 
 func Err(e error) Result {
-	return &err{err: e}
+	return &ErrImpl{err: e}
 }
 
 func (r *ErrImpl) IsOk() bool {
