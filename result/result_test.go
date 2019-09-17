@@ -82,3 +82,25 @@ func TestFMapErr(t *testing.T) {
 	assert.False(t, r2.IsOk())
 	assert.Equal(t, e, r2.Err())
 }
+
+func goFuncPattern(in string) (string, error) {
+	if in == "work" {
+		return fmt.Sprintf("hi %s", in), nil
+	}
+
+	return "", errors.New("incorrect input")
+}
+
+func TestFromGoWorks(t *testing.T) {
+	r := From(goFuncPattern("work"))
+
+	assert.True(t, r.IsOk())
+	assert.Equal(t, "hi work", r.Ok())
+}
+
+func TestFromGoNotWroking(t *testing.T) {
+	r := From(goFuncPattern("nope"))
+
+	assert.False(t, r.IsOk())
+	assert.Equal(t, "incorrect input", r.Err().Error())
+}

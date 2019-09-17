@@ -77,3 +77,11 @@ func Map(f func(F) T, r Result) Result {
 
 	return r
 }
+
+func From(v T, e error) Result {
+	if e != nil {
+		return Err(e)
+	}
+
+	return Ok(v)
+}
