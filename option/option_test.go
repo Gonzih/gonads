@@ -10,15 +10,15 @@ import (
 func TestSome(t *testing.T) {
 	o := Some("test")
 
-	assert.True(t, o.Some())
-	assert.False(t, o.None())
+	assert.True(t, o.IsSome())
+	assert.False(t, o.IsNone())
 }
 
 func TestNone(t *testing.T) {
 	o := None()
 
-	assert.False(t, o.Some())
-	assert.True(t, o.None())
+	assert.False(t, o.IsSome())
+	assert.True(t, o.IsNone())
 }
 
 func TestMapNone(t *testing.T) {
@@ -27,7 +27,7 @@ func TestMapNone(t *testing.T) {
 		return fmt.Sprintf("hello %v", s)
 	}, o)
 
-	assert.True(t, o2.None())
+	assert.True(t, o2.IsNone())
 }
 
 func TestMapSome(t *testing.T) {
@@ -36,7 +36,7 @@ func TestMapSome(t *testing.T) {
 		return fmt.Sprintf("hello %v", s)
 	}, o)
 
-	assert.True(t, o2.Some())
+	assert.True(t, o2.IsSome())
 	assert.Equal(t, o2.Unwrap(), "hello world")
 }
 
@@ -52,7 +52,7 @@ func TestFMapSome(t *testing.T) {
 	o := Some("potato")
 	o2 := FMap(getName, o)
 
-	assert.True(t, o2.Some())
+	assert.True(t, o2.IsSome())
 	assert.Equal(t, o2.Unwrap(), "Potato")
 }
 
@@ -60,12 +60,12 @@ func TestFMapSomeWithMissingVal(t *testing.T) {
 	o := Some("not potato")
 	o2 := FMap(getName, o)
 
-	assert.True(t, o2.None())
+	assert.True(t, o2.IsNone())
 }
 
 func TestFMapNone(t *testing.T) {
 	o := None()
 	o2 := FMap(getName, o)
 
-	assert.True(t, o2.None())
+	assert.True(t, o2.IsNone())
 }

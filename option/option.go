@@ -6,8 +6,8 @@ type F interface{}
 type T interface{}
 
 type Option interface {
-	Some() bool
-	None() bool
+	IsSome() bool
+	IsNone() bool
 	Unwrap() T
 	UnwrapOr(T) T
 }
@@ -20,12 +20,12 @@ func Some(v T) Option {
 	return &some{val: v}
 }
 
-func (o *some) Some() bool {
+func (o *some) IsSome() bool {
 	return true
 }
 
-func (o *some) None() bool {
-	return false
+func (o *some) IsNone() bool {
+	return !o.IsSome()
 }
 
 func (o *some) Unwrap() T {
@@ -43,12 +43,12 @@ func None() Option {
 	return &none{}
 }
 
-func (o *none) Some() bool {
+func (o *none) IsSome() bool {
 	return false
 }
 
-func (o *none) None() bool {
-	return true
+func (o *none) IsNone() bool {
+	return !o.IsSome()
 }
 
 func (o *none) Unwrap() T {
@@ -61,7 +61,7 @@ func (o *none) UnwrapOr(alt T) T {
 }
 
 func FMap(f func(F) Option, o Option) Option {
-	if o.Some() {
+	if o.IsSome() {
 		return f(o.Unwrap())
 	}
 
@@ -69,7 +69,7 @@ func FMap(f func(F) Option, o Option) Option {
 }
 
 func Map(f func(F) T, o Option) Option {
-	if o.Some() {
+	if o.IsSome() {
 		return Some(f(o.Unwrap()))
 	}
 
