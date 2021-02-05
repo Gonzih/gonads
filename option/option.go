@@ -1,79 +1,40 @@
 package option
 
-import "log"
+import "errors"
 
-type F interface{}
-type T interface{}
-
-type Option interface {
-	IsSome() bool
-	IsNone() bool
-	Unwrap() T
-	UnwrapOr(T) T
-	Map(func(F) T) Option
-	FMap(func(F) Option) Option
+type [T any]Option struct {
+	v T
+	is_some bool
 }
 
-type SomeImpl struct {
-	val T
+func Some[T any](v T) Option {
+	return &Option{v: v, is_some: true}
 }
 
-func Some(v T) Option {
-	return &SomeImpl{val: v}
+func None[T any]() Option {
+	return &Option{}
 }
 
-func (o *SomeImpl) IsSome() bool {
-	return true
+func (o *Option) Some() bool {
+	return op.is_some
 }
 
-func (o *SomeImpl) IsNone() bool {
-	return !o.IsSome()
+func (o *Option) None() bool {
+	return !op.Some()
 }
 
-func (o *SomeImpl) Unwrap() T {
-	return o.val
+func (o *Option) Unwrap[T any]() T {
+	if o.Some() {
+		return (o.v, nil)
+	} else {
+		return (nil, errors.New("Trying to Unwrap None"))
+	}
 }
 
-func (o *SomeImpl) UnwrapOr(_ T) T {
-	return o.val
-}
-
-func (o *SomeImpl) Map(f func(F) T) Option {
-	return Some(f(o.Unwrap()))
-}
-
-func (o *SomeImpl) FMap(f func(F) Option) Option {
-	return f(o.Unwrap())
-}
-
-type NoneImpl struct {
-}
-
-func None() Option {
-	return &NoneImpl{}
-}
-
-func (o *NoneImpl) IsSome() bool {
-	return false
-}
-
-func (o *NoneImpl) IsNone() bool {
-	return !o.IsSome()
-}
-
-func (o *NoneImpl) Unwrap() T {
-	log.Panic("Unwrap call on None!")
-	return nil
-}
-
-func (o *NoneImpl) UnwrapOr(alt T) T {
-	return alt
-}
-
-func (o *NoneImpl) Map(f func(F) T) Option {
-	return o
-}
-
-func (o *NoneImpl) FMap(f func(F) Option) Option {
-	return o
+func (o *Option) UnwrapOr[T any](other T) T {
+	if o.Some() {
+		return o.v
+	} else {
+		return other
+	}
 }

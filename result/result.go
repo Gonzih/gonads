@@ -1,89 +1,34 @@
 package result
 
-import "log"
-
-type F = interface{}
-type T = interface{}
-
-type Result interface {
-	IsOk() bool
-	IsErr() bool
-	Ok() T
-	Err() error
-	Map(func(F) T) Result
-	FMap(func(F) Result) Result
-}
-
-type OkImpl struct {
-	val T
-}
-
-func Ok(v T) Result {
-	return &OkImpl{val: v}
-}
-
-func (r *OkImpl) IsOk() bool {
-	return true
-}
-
-func (r *OkImpl) IsErr() bool {
-	return false
-}
-
-func (r *OkImpl) Ok() T {
-	return r.val
-}
-
-func (r *OkImpl) Err() error {
-	log.Panic("Not an Err type!")
-	return nil
-}
-
-func (r *OkImpl) Map(f func(F) T) Result {
-	return Ok(f(r.Ok()))
-}
-
-func (r *OkImpl) FMap(f func(F) Result) Result {
-	return f(r.Ok())
-}
-
-type ErrImpl struct {
+type [T any]Result struct {
+	v T
 	err error
 }
 
-func Err(e error) Result {
-	return &ErrImpl{err: e}
+func Ok[T any](v T) Result {
+	return &Result{v}
 }
 
-func (r *ErrImpl) IsOk() bool {
-	return false
+func Err[T any](err error) [T]Result {
+	return &Result{err}
 }
 
-func (r *ErrImpl) IsErr() bool {
-	return true
+func (r *Result) Ok() bool {
+	return r.err == nil
 }
 
-func (r *ErrImpl) Ok() T {
-	log.Panic("Not an Ok type!")
-	return nil
+func (r *Result) Err() bool {
+	return !r.Ok()
 }
 
-func (r *ErrImpl) Err() error {
-	return r.err
+func (r *Result) Unwrap[T any]() (T, error) {
+	return (r.v, r.err)
 }
 
-func (r *ErrImpl) Map(f func(F) T) Result {
-	return r
-}
-
-func (r *ErrImpl) FMap(f func(F) Result) Result {
-	return r
-}
-
-func From(v T, e error) Result {
-	if e != nil {
-		return Err(e)
+func (r *OkImpl) UnwrapOr[T any](other T) T {
+	if r.Ok() {
+		return r.v
+	} else {
+		return other
 	}
-
-	return Ok(v)
 }
