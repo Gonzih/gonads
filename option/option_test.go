@@ -9,13 +9,13 @@ import (
 func TestSome(t *testing.T) {
 	o := Some("test")
 
-	assert.True(t, o.IsSome())
-	assert.False(t, o.IsNone())
+	assert.True(t, o.Some())
+	assert.False(t, o.None())
 }
 
 func TestNone(t *testing.T) {
-	o := None()
+	o := None[string]()
 
-	assert.False(t, o.IsSome())
-	assert.True(t, o.IsNone())
+	assert.False(t, o.Some())
+	assert.True(t, o.None())
 }

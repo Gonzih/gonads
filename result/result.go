@@ -1,31 +1,39 @@
 package result
 
-type [T any]Result struct {
-	v T
+type Result[T any] struct {
+	v   *T
 	err error
 }
 
-func Ok[T any](v T) Result {
-	return &Result{v}
+func From[T any](v T, err error) *Result[T] {
+	if err != nil {
+		return Err[T](err)
+	} else {
+		return Ok(v)
+	}
 }
 
-func Err[T any](err error) [T]Result {
-	return &Result{err}
+func Ok[T any](v T) *Result[T] {
+	return &Result[T]{&v, nil}
 }
 
-func (r *Result) Ok() bool {
+func Err[T any](err error) *Result[T] {
+	return &Result[T]{nil, err}
+}
+
+func (r *Result[T]) Ok() bool {
 	return r.err == nil
 }
 
-func (r *Result) Err() bool {
+func (r *Result[T]) Err() bool {
 	return !r.Ok()
 }
 
-func (r *Result) Unwrap[T any]() (T, error) {
-	return (r.v, r.err)
+func (r *Result[T]) Unwrap() (*T, error) {
+	return r.v, r.err
 }
 
-func (r *OkImpl) UnwrapOr[T any](other T) T {
+func (r *Result[T]) UnwrapOr(other *T) *T {
 	if r.Ok() {
 		return r.v
 	} else {

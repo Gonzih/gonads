@@ -10,16 +10,20 @@ import (
 func TestOk(t *testing.T) {
 	r := Ok("test")
 
-	assert.True(t, r.IsOk())
-	assert.False(t, r.IsErr())
-	assert.Equal(t, "test", r.Ok())
+	assert.True(t, r.Ok())
+	assert.False(t, r.Err())
+	v, err := r.Unwrap()
+	assert.Nil(t, err)
+	assert.Equal(t, "test", *v)
 }
 
 func TestErr(t *testing.T) {
 	e := errors.New("error message")
-	r := Err(e)
+	r := Err[string](e)
 
-	assert.False(t, r.IsOk())
-	assert.True(t, r.IsErr())
-	assert.Equal(t, e, r.Err())
+	assert.False(t, r.Ok())
+	assert.True(t, r.Err())
+	v, err := r.Unwrap()
+	assert.Nil(t, v)
+	assert.Equal(t, e, err)
 }

@@ -2,36 +2,36 @@ package option
 
 import "errors"
 
-type [T any]Option struct {
-	v T
+type Option[T any] struct {
+	v       *T
 	is_some bool
 }
 
-func Some[T any](v T) Option {
-	return &Option{v: v, is_some: true}
+func Some[T any](v T) *Option[T] {
+	return &Option[T]{v: &v, is_some: true}
 }
 
-func None[T any]() Option {
-	return &Option{}
+func None[T any]() *Option[T] {
+	return &Option[T]{is_some: false}
 }
 
-func (o *Option) Some() bool {
-	return op.is_some
+func (o *Option[T]) Some() bool {
+	return o.is_some
 }
 
-func (o *Option) None() bool {
-	return !op.Some()
+func (o *Option[T]) None() bool {
+	return !o.Some()
 }
 
-func (o *Option) Unwrap[T any]() T {
+func (o *Option[T]) Unwrap() (*T, error) {
 	if o.Some() {
-		return (o.v, nil)
+		return o.v, nil
 	} else {
-		return (nil, errors.New("Trying to Unwrap None"))
+		return nil, errors.New("Trying to Unwrap None")
 	}
 }
 
-func (o *Option) UnwrapOr[T any](other T) T {
+func (o *Option[T]) UnwrapOr(other *T) *T {
 	if o.Some() {
 		return o.v
 	} else {
