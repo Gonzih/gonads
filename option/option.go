@@ -38,3 +38,11 @@ func (o *Option[T]) UnwrapOr(other *T) *T {
 		return other
 	}
 }
+
+func Map[F any, T any](o *Option[F], f func(v F) T) *Option[T] {
+	if o.Some() {
+		return Some(f(*o.v))
+	} else {
+		return None[T]()
+	}
+}

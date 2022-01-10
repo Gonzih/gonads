@@ -40,3 +40,11 @@ func (r *Result[T]) UnwrapOr(other *T) *T {
 		return other
 	}
 }
+
+func Map[F any, T any](o *Result[F], f func(v F) T) *Result[T] {
+	if o.Ok() {
+		return Ok(f(*o.v))
+	} else {
+		return Err[T](o.err)
+	}
+}
